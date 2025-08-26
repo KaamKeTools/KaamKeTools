@@ -3,138 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi Tool Hub</title>
+    <title>Kaam Ke Tools - Multi Tool Hub</title>
     <style>
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: #1E1E2F;
+            background-color: #1E1E2F;
             color: #EAEAEA;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #2B2D42;
+            padding: 25px;
             text-align: center;
-        }
-
-        .header {
-            background: #2B2D42;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #FFD700;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 900px;
-            margin: 40px auto;
-        }
-
-        .tool-card {
-            background: #3A3D5B;
-            padding: 20px;
             border-radius: 10px;
-            text-align: center;
-            transition: 0.3s;
-            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-
-        .tool-card:hover {
-            background: #FFD700;
-            color: #1E1E2F;
-        }
-
-        .tool-card h2 {
+        
+        header h1 {
+            color: #FFD700;
+            font-size: 2.5rem;
             margin-bottom: 10px;
         }
-
-        .btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: #FFD700;
+        
+        header p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Tools Grid */
+        .tools-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tool-card {
+            background-color: #3A3D5B;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 250px;
+        }
+        
+        .tool-card:hover {
+            background-color: #FFD700;
+            color: #1E1E2F;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        .tool-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #FFD700;
+        }
+        
+        .tool-card:hover h2 {
+            color: #1E1E2F;
+        }
+        
+        .tool-card p {
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        /* Button Styles */
+        .tool-btn {
+            background-color: #FFD700;
             color: #1E1E2F;
             border: none;
+            padding: 12px 25px;
             border-radius: 5px;
+            font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
         }
-
-        .btn:hover {
-            background: #E6C200;
+        
+        .tool-btn:hover {
+            background-color: #E6C200;
         }
-
+        
+        .tool-card:hover .tool-btn {
+            background-color: #1E1E2F;
+            color: #FFD700;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #EAEAEA;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .container {
+            .tools-container {
                 grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tool-card {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">Multi Tool Hub</div>
+    <header>
+        <h1>Multi Tool Hub</h1>
+        <p>Your one-stop destination for all essential online tools. Simple, fast, and efficient - just how tools should be!</p>
+    </header>
     
-    <div class="container">
+    <main class="tools-container">
+        <!-- Tool 1: Image Converter -->
         <div class="tool-card">
             <h2>Image Converter</h2>
-            <p>Convert images to different formats easily.</p>
-            <button class="btn" onclick="goToSection('image-converter')">Go to Tool</button>
+            <p>Convert your images between various formats like JPG, PNG, WEBP, and more with just a few clicks.</p>
+            <button class="tool-btn" onclick="redirectToTool('Image Converter')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 2: Image Compressor -->
         <div class="tool-card">
             <h2>Image Compressor</h2>
-            <p>Compress images without losing quality.</p>
-            <button class="btn" onclick="goToSection('image-compressor')">Go to Tool</button>
+            <p>Reduce your image file sizes without sacrificing quality. Perfect for websites and social media.</p>
+            <button class="tool-btn" onclick="redirectToTool('Image Compressor')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 3: Image Crop -->
         <div class="tool-card">
             <h2>Image Crop</h2>
-            <p>Crop images to the desired size and dimensions.</p>
-            <button class="btn" onclick="goToSection('image-crop')">Go to Tool</button>
+            <p>Crop your images to the perfect size and aspect ratio. Remove unwanted areas with precision.</p>
+            <button class="tool-btn" onclick="redirectToTool('Image Crop')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 4: Video Converter -->
         <div class="tool-card">
             <h2>Video Converter</h2>
-            <p>Convert videos to different formats quickly.</p>
-            <button class="btn" onclick="goToSection('video-converter')">Go to Tool</button>
+            <p>Convert videos between different formats. Supports MP4, AVI, MOV, and many other formats.</p>
+            <button class="tool-btn" onclick="redirectToTool('Video Converter')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 5: Age Calculator -->
         <div class="tool-card">
             <h2>Age Calculator</h2>
-            <p>Find your exact age in years, months, and days.</p>
-            <button class="btn" onclick="goToSection('age-calculator')">Go to Tool</button>
+            <p>Calculate exact age between two dates. Find out age in years, months, weeks, and even days!</p>
+            <button class="tool-btn" onclick="redirectToTool('Age Calculator')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 6: EMI Calculator -->
         <div class="tool-card">
             <h2>EMI Calculator</h2>
-            <p>Calculate your loan EMIs quickly.</p>
-            <button class="btn" onclick="goToSection('emi-calculator')">Go to Tool</button>
+            <p>Calculate your Equated Monthly Installments for loans. Plan your finances with accurate calculations.</p>
+            <button class="tool-btn" onclick="redirectToTool('EMI Calculator')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 7: SIP Calculator -->
         <div class="tool-card">
             <h2>SIP Calculator</h2>
-            <p>Calculate your SIP returns effortlessly.</p>
-            <button class="btn" onclick="goToSection('sip-calculator')">Go to Tool</button>
+            <p>Calculate returns on your Systematic Investment Plan investments. Plan your financial future.</p>
+            <button class="tool-btn" onclick="redirectToTool('SIP Calculator')">Use Tool</button>
         </div>
-
+        
+        <!-- Tool 8: Audio Trim -->
         <div class="tool-card">
             <h2>Audio Trim</h2>
-            <p>Trim audio files to your required length.</p>
-            <button class="btn" onclick="goToSection('audio-trim')">Go to Tool</button>
+            <p>Trim your audio files to remove unwanted parts. Create perfect clips from longer recordings.</p>
+            <button class="tool-btn" onclick="redirectToTool('Audio Trim')">Use Tool</button>
         </div>
-    </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2023 Kaam Ke Tools. All rights reserved.</p>
+    </footer>
 
     <script>
-        function goToSection(sectionId) {
-            alert('Redirecting to ' + sectionId + ' (Page under development)');
-            // Replace with actual navigation logic when the pages are ready
+        function redirectToTool(toolName) {
+            alert(`Redirecting to ${toolName}`);
+            // In a real implementation, this would redirect to the actual tool page
+            // window.location.href = `/${toolName.toLowerCase().replace(' ', '-')}`;
         }
     </script>
 </body>
 </html>
-
-  
