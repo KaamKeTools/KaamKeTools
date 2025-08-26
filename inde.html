@@ -4,214 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kaam Ke Tools - Multi Tool Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background-color: #1E1E2F;
+            background: #1E1E2F;
             color: #EAEAEA;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        
-        /* Header Styles */
-        header {
-            background-color: #2B2D42;
-            padding: 25px;
             text-align: center;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 0 15px;
         }
-        
-        header h1 {
+
+        .header {
+            background: linear-gradient(135deg, #2B2D42 0%, #1A1C2D 100%);
+            padding: 25px 20px;
+            font-size: 28px;
+            font-weight: bold;
             color: #FFD700;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
         }
-        
-        header p {
-            font-size: 1.1rem;
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD700, #E6C200, #FFD700);
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            font-size: 18px;
+            font-weight: normal;
+            color: #EAEAEA;
             max-width: 800px;
             margin: 0 auto;
         }
-        
-        /* Tools Grid */
-        .tools-container {
+
+        .container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 25px;
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 0 auto 50px;
         }
-        
+
         .tool-card {
-            background-color: #3A3D5B;
-            border-radius: 10px;
-            padding: 25px;
+            background: #3A3D5B;
+            padding: 25px 20px;
+            border-radius: 12px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 250px;
+            min-height: 220px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
         }
-        
+
         .tool-card:hover {
-            background-color: #FFD700;
+            background: #FFD700;
             color: #1E1E2F;
             transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
         }
-        
-        .tool-card h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: #FFD700;
-        }
-        
-        .tool-card:hover h2 {
+
+        .tool-card:hover h2,
+        .tool-card:hover .icon {
             color: #1E1E2F;
         }
-        
+
+        .tool-card h2 {
+            margin-bottom: 12px;
+            color: #FFD700;
+            font-size: 22px;
+            transition: color 0.3s ease;
+        }
+
         .tool-card p {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            line-height: 1.5;
             flex-grow: 1;
         }
-        
-        /* Button Styles */
-        .tool-btn {
-            background-color: #FFD700;
+
+        .icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #FFD700;
+            transition: color 0.3s ease;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 5px;
+            padding: 12px 25px;
+            background: #FFD700;
             color: #1E1E2F;
             border: none;
-            padding: 12px 25px;
             border-radius: 5px;
-            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 1rem;
+            transition: 0.3s;
+            font-weight: bold;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
-        
-        .tool-btn:hover {
-            background-color: #E6C200;
+
+        .btn:hover {
+            background: #E6C200;
+            transform: scale(1.05);
         }
-        
-        .tool-card:hover .tool-btn {
-            background-color: #1E1E2F;
+
+        .tool-card:hover .btn {
+            background: #1E1E2F;
             color: #FFD700;
         }
-        
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 50px;
+
+        .footer {
+            margin-top: 40px;
             padding: 20px;
             color: #EAEAEA;
-            font-size: 0.9rem;
+            background: #2B2D42;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
         }
-        
-        /* Responsive Design */
+
         @media (max-width: 768px) {
-            .tools-container {
+            .container {
                 grid-template-columns: 1fr;
+                max-width: 500px;
             }
             
-            header h1 {
-                font-size: 2rem;
+            .header {
+                font-size: 24px;
+                padding: 20px 15px;
+            }
+            
+            .header p {
+                font-size: 16px;
             }
         }
-        
+
         @media (max-width: 480px) {
-            header h1 {
-                font-size: 1.8rem;
+            .tool-card {
+                padding: 20px 15px;
             }
             
-            .tool-card {
-                padding: 20px;
+            .tool-card h2 {
+                font-size: 20px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Multi Tool Hub</h1>
-        <p>Your one-stop destination for all essential online tools. Simple, fast, and efficient - just how tools should be!</p>
-    </header>
+    <div class="header">
+        <h1>Kaam Ke Tools</h1>
+        <p>Your one-stop destination for all essential online tools</p>
+    </div>
     
-    <main class="tools-container">
-        <!-- Tool 1: Image Converter -->
+    <div class="container">
         <div class="tool-card">
+            <i class="icon fas fa-exchange-alt"></i>
             <h2>Image Converter</h2>
-            <p>Convert your images between various formats like JPG, PNG, WEBP, and more with just a few clicks.</p>
-            <button class="tool-btn" onclick="redirectToTool('Image Converter')">Use Tool</button>
+            <p>Convert images to different formats easily.</p>
+            <button class="btn" onclick="goToTool('Image Converter')">Use Tool</button>
         </div>
-        
-        <!-- Tool 2: Image Compressor -->
+
         <div class="tool-card">
+            <i class="icon fas fa-compress-alt"></i>
             <h2>Image Compressor</h2>
-            <p>Reduce your image file sizes without sacrificing quality. Perfect for websites and social media.</p>
-            <button class="tool-btn" onclick="redirectToTool('Image Compressor')">Use Tool</button>
+            <p>Compress images without losing quality.</p>
+            <button class="btn" onclick="goToTool('Image Compressor')">Use Tool</button>
         </div>
-        
-        <!-- Tool 3: Image Crop -->
+
         <div class="tool-card">
+            <i class="icon fas fa-crop-alt"></i>
             <h2>Image Crop</h2>
-            <p>Crop your images to the perfect size and aspect ratio. Remove unwanted areas with precision.</p>
-            <button class="tool-btn" onclick="redirectToTool('Image Crop')">Use Tool</button>
+            <p>Crop images to the desired size and dimensions.</p>
+            <button class="btn" onclick="goToTool('Image Crop')">Use Tool</button>
         </div>
-        
-        <!-- Tool 4: Video Converter -->
+
         <div class="tool-card">
+            <i class="icon fas fa-video"></i>
             <h2>Video Converter</h2>
-            <p>Convert videos between different formats. Supports MP4, AVI, MOV, and many other formats.</p>
-            <button class="tool-btn" onclick="redirectToTool('Video Converter')">Use Tool</button>
+            <p>Convert videos to different formats quickly.</p>
+            <button class="btn" onclick="goToTool('Video Converter')">Use Tool</button>
         </div>
-        
-        <!-- Tool 5: Age Calculator -->
+
         <div class="tool-card">
+            <i class="icon fas fa-birthday-cake"></i>
             <h2>Age Calculator</h2>
-            <p>Calculate exact age between two dates. Find out age in years, months, weeks, and even days!</p>
-            <button class="tool-btn" onclick="redirectToTool('Age Calculator')">Use Tool</button>
+            <p>Find your exact age in years, months, and days.</p>
+            <button class="btn" onclick="goToTool('Age Calculator')">Use Tool</button>
         </div>
-        
-        <!-- Tool 6: EMI Calculator -->
+
         <div class="tool-card">
+            <i class="icon fas fa-calculator"></i>
             <h2>EMI Calculator</h2>
-            <p>Calculate your Equated Monthly Installments for loans. Plan your finances with accurate calculations.</p>
-            <button class="tool-btn" onclick="redirectToTool('EMI Calculator')">Use Tool</button>
+            <p>Calculate your loan EMIs quickly.</p>
+            <button class="btn" onclick="goToTool('EMI Calculator')">Use Tool</button>
         </div>
-        
-        <!-- Tool 7: SIP Calculator -->
+
         <div class="tool-card">
+            <i class="icon fas fa-chart-line"></i>
             <h2>SIP Calculator</h2>
-            <p>Calculate returns on your Systematic Investment Plan investments. Plan your financial future.</p>
-            <button class="tool-btn" onclick="redirectToTool('SIP Calculator')">Use Tool</button>
+            <p>Calculate your SIP returns effortlessly.</p>
+            <button class="btn" onclick="goToTool('SIP Calculator')">Use Tool</button>
         </div>
-        
-        <!-- Tool 8: Audio Trim -->
+
         <div class="tool-card">
+            <i class="icon fas fa-music"></i>
             <h2>Audio Trim</h2>
-            <p>Trim your audio files to remove unwanted parts. Create perfect clips from longer recordings.</p>
-            <button class="tool-btn" onclick="redirectToTool('Audio Trim')">Use Tool</button>
+            <p>Trim audio files to your required length.</p>
+            <button class="btn" onclick="goToTool('Audio Trim')">Use Tool</button>
         </div>
-    </main>
-    
-    <footer>
+    </div>
+
+    <div class="footer">
         <p>&copy; 2023 Kaam Ke Tools. All rights reserved.</p>
-    </footer>
+    </div>
 
     <script>
-        function redirectToTool(toolName) {
-            alert(`Redirecting to ${toolName}`);
-            // In a real implementation, this would redirect to the actual tool page
-            // window.location.href = `/${toolName.toLowerCase().replace(' ', '-')}`;
+        function goToTool(toolName) {
+            alert('Redirecting to ' + toolName);
+            // Replace with actual navigation logic when the pages are ready
         }
     </script>
 </body>
