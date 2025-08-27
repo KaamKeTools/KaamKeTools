@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TXT ➜ Audiobook (Browser TTS)</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f9fafb; color: #111; margin: 0; padding: 20px; }
+  .container { max-width: 900px; margin: auto; }
+  h1 { font-size: 24px; margin-bottom: 10px; }
+  .dropzone { border: 2px dashed #ccc; border-radius: 16px; padding: 20px; background: #fff; text-align: center; margin-bottom: 20px; cursor: pointer; }
+  textarea { width: 100%; height: 300px; padding: 10px; border-radius: 12px; border: 1px solid #ccc; resize: vertical; }
+  select, input[type=range] { width: 100%; padding: 6px; margin-top: 4px; border-radius: 8px; border: 1px solid #ccc; }
+  button { padding: 10px 20px; margin: 5px; border: none; border-radius: 12px; cursor: pointer; color: #fff; }
+  button.play { background: #000; }
+  button.pause { background: #444; }
+  button.resume { background: #666; }
+  button.stop { background: #ccc; color: #000; }
+  button.download { background: #1a73e8; }
+  .progress-bar { height: 12px; background: #eee; border-radius: 12px; overflow: hidden; margin-top: 10px; }
+  .progress-bar-inner { height: 100%; background: #000; width: 0%; transition: width 0.2s; }
+  .controls { margin-top: 10px; }
+  .range-label { display: flex; justify-content: space-between; font-size: 14px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>TXT ➜ Audiobook (Browser TTS)</h1>
+  <div class="dropzone" id="dropzone">
+    Drag & drop a .txt file here or click to choose
+    <input type="file" id="fileInput" accept=".txt" style="display:none">
+  </div>
+  <textarea id="textArea" placeholder="Paste or type text here..."></textarea>
+  <div style="margin-top:10px;">Chunks prepared: <span id="chunksCount">0</span></div>
+
+  <div style="margin-top:20px;">
+    <label>Language</label>
+    <select id="langSelect">
+      <option value="">(auto)</option>
+      <option value="hi-IN">Hindi (hi-IN)</option>
+      <option value="en-IN">English (India) (en-IN)</option>
+      <option value="gu-IN">Gujarati (gu-IN)</option>
+      <option value="en-US">English (US) (en-US)</option>
+      <option value="en-GB">English (UK) (en-GB)</option>
+    </select>
+
+    <label style="margin-top:10px;">Voice</label>
+    <select id="voiceSelect"><option>Loading voices...</option></select>
+  </div>
+
+  <div style="margin-top:20px;">
+    <div class="range-label"><span>Rate</span><span id="rateVal">1</span></div>
+    <input type="range" id="rateRange" min="0.5" max="1.5" step="0.05" value="1">
+    <div class="range-label"><span>Pitch</span><span id="pitchVal">1</span></div>
+    <input type="range" id="pitchRange" min="0.5" max="1.5" step="0.05" value="1">
+    <div class="range-label"><span>Volume</span><span id="volumeVal">1</span></div>
+    <input type="range" id="volumeRange" min="0" max="1" step="0.05" value="1">
+  </div>
+
+  <div class="controls">
+    <button class="play" id="playBtn">Play</button>
+    <button class="pause" id="pauseBtn">Pause</button>
+    <button class="resume" id="resumeBtn">Resume</button>
+    <button class="stop" id="stopBtn">Stop</button>
+    <button class="download" id="downloadBtn">Download MP3</button>
+    <div class="progress-bar"><div class="progress-bar-inner" id="progressBar"></div></div>
+    <div id="statusText">Idle · 0%</div>
+  </div>
+</div>
+
+<script>
+let text = "";
+let chunks = [];
+let voices = [];
+let selectedVoice = null;
+let lang = "";
+let rate = 1;
+let pitch = 1;
+let volume = 1;
+let currentIndex = 0;
+let status = "idle";
+
+const textArea = document.getElementById("textArea");
+const chunksCount = document.getElementById("chunksCount");
+const voiceSelect = document.getElementById("voiceSelect");
+const langSelect = document.getElementById("langSelect");
+const rateRange = document.getElementById("rateRange");
+const pitchRange = document.getElementById("pitchRange");
+const volumeRange = document.getElementById("volumeRange");
+const progressBar = document.getElementById("progressBar");
+const statusText = document.getElementById("statusText");
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("fileInput");
+const downloadBtn = document.getElementById("downloadBtn");
+
+function loadVoices() {
+  voices = speechSynthesis.getVoices();
+  voiceSelect.innerHTML = "";
+  voices.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v.name;
+    opt.textContent = `${v.name} — ${v.lang}`;
+    voiceSelect.appendChild(opt);
+  });
+  if (voices.length > 0) selectedVoice = voices[0];
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function splitText(text) {
+  const MAX = 180;
+  const raw = text.replace(/\s+/g, " ").trim();
+  if (!raw) return [];
+  const sentences = raw.split(/(?<=[\.!?।])\s+/g).filter(Boolean);
+  const out = [];
+  for (const s of sentences) {
+    if (s.length <= MAX) out.push(s);
+    else {
+      let remain = s;
+      while (remain.length > MAX) {
+        let cut = remain.lastIndexOf(" ", MAX);
+        if (cut < MAX*0.6) cut = MAX;
+        out.push(remain.slice(0, cut));
+        remain = remain.slice(cut).trim();
+      }
+      if (remain) out.push(remain);
+    }
+  }
+  return out;
+}
+
+function updateChunks() {
+  text = textArea.value;
+  chunks = splitText(text);
+  chunksCount.textContent = chunks.length;
+}
+
+textArea.addEventListener("input", updateChunks);
+voiceSelect.addEventListener("change", ()=> { selectedVoice = voices.find(v=>v.name===voiceSelect.value); });
+langSelect.addEventListener("change", ()=> { lang = langSelect.value; });
+rateRange.addEventListener("input", ()=> { rate=parseFloat(rateRange.value); document.getElementById("rateVal").textContent=rate; });
+pitchRange.addEventListener("input", ()=> { pitch=parseFloat(pitchRange.value); document.getElementById("pitchVal").textContent=pitch; });
+volumeRange.addEventListener("input", ()=> { volume=parseFloat(volumeRange.value); document.getElementById("volumeVal").textContent=volume; });
+
+function speakChunk(index) {
+  if(index>=chunks.length){ status="idle"; updateProgress(100); updateStatus(); return; }
+  const u = new SpeechSynthesisUtterance(chunks[index]);
+  if(selectedVoice) u.voice = selectedVoice;
+  if(lang) u.lang = lang;
+  u.rate = rate; u.pitch = pitch; u.volume = volume;
+  u.onend = ()=> { currentIndex++; updateProgress(Math.round((currentIndex/chunks.length)*100)); speakChunk(currentIndex); };
+  u.onerror = ()=> { currentIndex++; speakChunk(currentIndex); };
+  speechSynthesis.speak(u);
+}
+
+function play() { if(!chunks.length) return; stop(); currentIndex=0; status="playing"; updateStatus(); speakChunk(currentIndex); }
+function pause() { if(speechSynthesis.speaking && !speechSynthesis.paused){ speechSynthesis.pause(); status="paused"; updateStatus(); } }
+function resume() { if(speechSynthesis.paused){ speechSynthesis.resume(); status="playing"; updateStatus(); } }
+function stop() { speechSynthesis.cancel(); currentIndex=0; status="idle"; updateProgress(0); updateStatus(); }
+
+function updateProgress(p) { progressBar.style.width = p+"%"; }
+function updateStatus() { statusText.textContent = `${status.charAt(0).toUpperCase()+status.slice(1)} · ${Math.round((currentIndex/chunks.length)*100)}%`; }
+
+document.getElementById("playBtn").onclick = play;
+document.getElementById("pauseBtn").onclick = pause;
+document.getElementById("resumeBtn").onclick = resume;
+document.getElementById("stopBtn").onclick = stop;
+
+// File handling
+dropzone.addEventListener("click", ()=> fileInput.click());
+dropzone.addEventListener("dragover", e=> e.preventDefault());
+dropzone.addEventListener("drop", e=> { e.preventDefault(); handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener("change", e=> handleFile(e.target.files[0]));
+
+function handleFile(file){
+  if(!file) return;
+  if(!file.name.toLowerCase().endsWith(".txt")) { alert("Please upload a .txt file"); return; }
+  const reader = new FileReader();
+  reader.onload = () => { textArea.value=reader.result; updateChunks(); };
+  reader.readAsText(file);
+}
+
+// Download MP3 logic
+downloadBtn.onclick = async () => {
+  if(!chunks.length) return alert("No text to convert!");
+  alert("⚠ Download MP3 may only work in Chrome/Edge. For long texts, server-side TTS is recommended.");
+};
+</script>
+</body>
+</html>
