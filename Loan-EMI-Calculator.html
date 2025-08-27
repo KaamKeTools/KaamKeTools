@@ -1,69 +1,76 @@
-  
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loan EMI Calculator</title>
   <style>
-    body {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
-      background: #f4faff;
+    }
+
+    body {
+      background: #f7fbff;
+      color: #333;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      margin: 0;
+      padding: 20px;
     }
 
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
-      text-align: center;
-      width: 90%;
+    .calculator {
+      background: #ffffff;
+      width: 100%;
       max-width: 450px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 12px rgba(0, 123, 255, 0.2);
     }
 
-    h1 {
+    .calculator h2 {
+      text-align: center;
       color: #007bff;
       margin-bottom: 20px;
     }
 
-    input {
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input, select {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 10px;
+      border-radius: 8px;
+      outline: none;
+      transition: border 0.3s;
     }
 
-    button {
-      background-color: #007bff;
-      color: #fff;
-      padding: 12px 20px;
-      border: none;
+    input:focus, select:focus {
+      border: 1px solid #007bff;
+    }
+
+    .results {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    .results p {
+      margin: 8px 0;
       font-size: 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    .result {
-      margin-top: 20px;
-      font-weight: bold;
-      font-size: 18px;
     }
 
     @media (max-width: 500px) {
-      .container {
+      .calculator {
         padding: 20px;
       }
     }
@@ -71,43 +78,73 @@
 </head>
 <body>
 
-  <div class="container">
-    <h1>Loan EMI Calculator</h1>
-    <input type="number" id="loanAmount" placeholder="Loan Amount (₹)" />
-    <input type="number" id="interestRate" placeholder="Annual Interest Rate (%)" />
-    <input type="number" id="loanTenure" placeholder="Loan Tenure (in months)" />
-    <button onclick="calculateEMI()">Calculate EMI</button>
-    <div class="result" id="result"></div>
+  <div class="calculator">
+    <h2>Loan EMI Calculator</h2>
+
+    <label for="loanAmount">Loan Amount (₹)</label>
+    <input type="number" id="loanAmount" placeholder="Enter loan amount" min="1">
+
+    <label for="interestRate">Annual Interest Rate (%)</label>
+    <input type="number" id="interestRate" placeholder="Enter interest rate" step="0.01" min="0">
+
+    <label for="tenure">Loan Tenure</label>
+    <input type="number" id="tenure" placeholder="Enter tenure" min="1">
+
+    <label for="tenureType">Tenure Type</label>
+    <select id="tenureType">
+      <option value="months">Months</option>
+      <option value="years">Years</option>
+    </select>
+
+    <div class="results">
+      <p><strong>Monthly EMI:</strong> ₹<span id="emi">0</span></p>
+      <p><strong>Total Interest:</strong> ₹<span id="totalInterest">0</span></p>
+      <p><strong>Total Payment:</strong> ₹<span id="totalPayment">0</span></p>
+    </div>
   </div>
 
   <script>
-    function calculateEMI() {
-      const loanAmount = parseFloat(document.getElementById("loanAmount").value);
-      const annualInterestRate = parseFloat(document.getElementById("interestRate").value);
-      const tenure = parseInt(document.getElementById("loanTenure").value);
+    const loanAmountInput = document.getElementById("loanAmount");
+    const interestRateInput = document.getElementById("interestRate");
+    const tenureInput = document.getElementById("tenure");
+    const tenureTypeSelect = document.getElementById("tenureType");
+    const emiOutput = document.getElementById("emi");
+    const totalInterestOutput = document.getElementById("totalInterest");
+    const totalPaymentOutput = document.getElementById("totalPayment");
 
-      if (!loanAmount || !annualInterestRate || !tenure || loanAmount <= 0 || annualInterestRate <= 0 || tenure <= 0) {
-        document.getElementById("result").textContent = "Please enter valid inputs.";
+    function calculateEMI() {
+      const principal = parseFloat(loanAmountInput.value) || 0;
+      const annualRate = parseFloat(interestRateInput.value) || 0;
+      let tenure = parseInt(tenureInput.value) || 0;
+
+      if (tenureTypeSelect.value === "years") {
+        tenure = tenure * 12;
+      }
+
+      if (principal <= 0 || annualRate < 0 || tenure <= 0) {
+        emiOutput.innerText = "0";
+        totalInterestOutput.innerText = "0";
+        totalPaymentOutput.innerText = "0";
         return;
       }
 
-      const monthlyInterestRate = annualInterestRate / 12 / 100;
-      const emi = (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, tenure)) /
-                  (Math.pow(1 + monthlyInterestRate, tenure) - 1);
+      const monthlyRate = annualRate / 12 / 100;
+      const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenure)) /
+                  (Math.pow(1 + monthlyRate, tenure) - 1);
 
       const totalPayment = emi * tenure;
-      const totalInterest = totalPayment - loanAmount;
+      const totalInterest = totalPayment - principal;
 
-      document.getElementById("result").innerHTML = `
-        Monthly EMI: ₹${emi.toFixed(2)}<br/>
-        Total Interest: ₹${totalInterest.toFixed(2)}<br/>
-        Total Payment: ₹${totalPayment.toFixed(2)}
-      `;
+      emiOutput.innerText = emi.toFixed(2);
+      totalInterestOutput.innerText = totalInterest.toFixed(2);
+      totalPaymentOutput.innerText = totalPayment.toFixed(2);
     }
+
+    loanAmountInput.addEventListener("input", calculateEMI);
+    interestRateInput.addEventListener("input", calculateEMI);
+    tenureInput.addEventListener("input", calculateEMI);
+    tenureTypeSelect.addEventListener("change", calculateEMI);
   </script>
 
 </body>
 </html>
-
-  
-  
